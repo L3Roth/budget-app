@@ -8,10 +8,12 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   templateUrl: './budget-item-list.component.html',
   styleUrls: ['./budget-item-list.component.scss']
 })
+
 export class BudgetItemListComponent implements OnInit {
 
   @Input() budgetItems: BudgetItem[];
   @Output() delete: EventEmitter<BudgetItem> = new EventEmitter<BudgetItem>();
+  @Output() update: EventEmitter<UpdateEvent> = new EventEmitter<UpdateEvent>();
 
   constructor(public dialog: MatDialog) { }
 
@@ -28,6 +30,23 @@ export class BudgetItemListComponent implements OnInit {
       width: '580px',
       data: item
     });
+
+    dialogRef.afterClosed().subscribe(result => {
+      //check if result has value
+      if (result) {
+        this.update.emit({
+          old: item,
+          new: result
+        })
+      }
+    })
   }
 
 }
+
+export interface UpdateEvent {
+  old: BudgetItem;
+  new: BudgetItem;
+}
+
+

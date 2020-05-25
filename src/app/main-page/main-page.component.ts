@@ -1,5 +1,6 @@
 import { BudgetItem } from './../../shared/models/budget-item.module';
 import { Component, OnInit } from '@angular/core';
+import { UpdateEvent } from '../budget-item-list/budget-item-list.component';
 
 @Component({
   selector: 'app-main-page',
@@ -9,6 +10,7 @@ import { Component, OnInit } from '@angular/core';
 export class MainPageComponent implements OnInit {
 
   budgetItems: BudgetItem[] = new Array<BudgetItem>();
+  totalBudget = 0;
 
   constructor() { }
 
@@ -17,11 +19,22 @@ export class MainPageComponent implements OnInit {
 
   addItem(newItem: BudgetItem) {
     this.budgetItems.push(newItem);
+    this.totalBudget += newItem.amount;
   }
 
   deleteItem(item: BudgetItem) {
     const index = this.budgetItems.indexOf(item);
     this.budgetItems.splice(index, 1);
+    this.totalBudget -= item.amount;
+  }
+
+  updateItem(updateEvent: UpdateEvent) {
+    //replace the item with updated/submitted item from form
+    this.budgetItems[this.budgetItems.indexOf(updateEvent.old)] = updateEvent.new;
+
+    //update the total budget
+    this.totalBudget -= updateEvent.old.amount;
+    this.totalBudget += updateEvent.new.amount;
   }
 
 }
